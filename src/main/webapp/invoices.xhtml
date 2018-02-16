@@ -1,0 +1,91 @@
+	<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:opt="http://primefaces.prime.com.br/optimus"
+      xmlns:p="http://primefaces.org/ui">
+	<h:head>
+		<link rel="stylesheet" href="css/bootstrap.css" type="text/css" media="all" />
+		<link rel="stylesheet" href="css/bootstrap-theme.css" type="text/css" media="all" />
+		<link rel="stylesheet" href="css/style.css" type="text/css" media="all" />
+	</h:head>
+	<ui:composition template="template.xhtml">
+		<ui:define name="body">
+			<h:form>
+				<p:panel header="Invoices">
+					<p:toolbar>
+						<f:facet name="left">
+							<p:inputText id="txtbCusName" value="#{invoiceController.cusName}" placeholder="Customer's name" />
+				        </f:facet>
+				        <f:facet name="right">
+							<p:calendar id="txtbIniDate" value="#{invoiceController.iniDate}" placeholder="01/01/2018" pattern="MM/dd/yyyy" styleClass="calendar">
+								<f:convertDateTime pattern="MM/dd/yyyy" />
+							</p:calendar>
+							<p:calendar id="txtbFinDate" value="#{invoiceController.finDate}" placeholder="02/01/2018" pattern="MM/dd/yyyy">
+								<f:convertDateTime pattern="MM/dd/yyyy" />
+							</p:calendar>
+							<p:selectBooleanCheckbox value="#{invoiceController.findByDueDate}" itemLabel="Find by due date">
+								<f:ajax />
+							</p:selectBooleanCheckbox>
+					        <p:commandButton type="btnSearch" value="Search" icon="ui-icon-extlink" >
+					        	<f:ajax execute="@form" render="@form" />
+					        </p:commandButton>
+				        </f:facet>
+				    </p:toolbar>
+					<p:dataTable id="invoicesTable" value="#{invoiceController.listInvoices()}"	var="invoice" rows="10">
+						<p:column >
+							<f:facet name="header">
+								<h:outputText value="Customer" />
+							</f:facet>
+							<h:outputText value="#{invoice.customerName}"/>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Issue Date"/>
+							</f:facet>
+							<h:outputText value="#{invoice.issueDate}">
+								<f:convertDateTime pattern="MM/dd/yyyy"></f:convertDateTime>
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Due Date"/>
+							</f:facet>
+							<h:outputText value="#{invoice.dueDate}">
+								<f:convertDateTime pattern="MM/dd/yyyy"/>
+							</h:outputText>
+						</p:column>
+						<p:column>
+							<f:facet name="header">
+								<h:outputText value="Comments"/>
+							</f:facet>
+							<h:outputText value="#{invoice.comments}"/>
+						</p:column>
+						<p:column style="width:10%;">
+							<f:facet name="header">
+								<h:outputText value="Total"/>
+							</f:facet>
+							<h:outputText value="$ #{invoice.totalValue.doubleValue()}"/>
+						</p:column>
+						<p:column style="width:22%;">
+							<f:facet name="header">
+								<h:outputText value="Details"/>
+							</f:facet>
+							<h:commandLink action="invoiceView.xhtml">
+						    	<p:commandButton value="Details" action="#{invoiceController.prepareDetails(invoice)}" icon="ui-icon-extlink"/>
+						    </h:commandLink>
+						   	<p:commandButton actionListener="#{invoiceController.deleteInvoice(invoice)}" id="btnDel" update="invoicesTable" icon="ui-icon-trash" title="Delete invoice">
+						   		<p:confirm header="Confirmation" message="Are you sure?" icon="ui-icon-alert" />
+							</p:commandButton>
+							<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+								<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+								<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+							</p:confirmDialog>
+						</p:column>
+					</p:dataTable>
+				</p:panel>
+			</h:form>
+		</ui:define>
+	</ui:composition>
+</html>

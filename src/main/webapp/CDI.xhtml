@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:opt="http://primefaces.prime.com.br/optimus"
+      xmlns:p="http://primefaces.org/ui">
+	<h:head>
+		<link rel="stylesheet" href="css/bootstrap.css" type="text/css" media="all" />
+		<link rel="stylesheet" href="css/bootstrap-theme.css" type="text/css" media="all" />
+		<link rel="stylesheet" href="css/style.css" type="text/css" media="all" />
+	</h:head>
+	<ui:composition template="template.xhtml">
+		<ui:define name="body">
+			<fieldset>
+				<div class="formTitle">
+					CDI
+				</div>
+				<div class="formBody">
+					<div class="form-horizontal">
+						<p:outputLabel value="#{soma.retorna()}"></p:outputLabel>
+					</div>
+				</div>
+			</fieldset>
+		</ui:define>
+	</ui:composition>
+</html>

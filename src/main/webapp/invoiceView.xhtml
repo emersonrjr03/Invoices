@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:opt="http://primefaces.prime.com.br/optimus"
+      xmlns:p="http://primefaces.org/ui">
+	<h:head>
+		<link rel="stylesheet" href="css/bootstrap.css" type="text/css" media="all" />
+		<link rel="stylesheet" href="css/bootstrap-theme.css" type="text/css" media="all" />
+		<link rel="stylesheet" href="css/style.css" type="text/css" media="all" />
+	</h:head>
+	<ui:composition template="template.xhtml">
+		<ui:define name="body">
+			<h:form>
+				<p:tab id="invoicesTab" title="">
+					<p:toolbar>
+						<f:facet name="left">
+							<h:outputLink value="\invoices.xhtml">
+				            	<p:commandButton type="button" title="Back to invoices" value="back" icon="ui-icon-arrowreturn-1-w" />
+				        	</h:outputLink>
+				        </f:facet>
+				        <f:facet name="right">
+				        	<h:commandLink action="invoiceEdit.xhtml">
+				            	<p:commandButton type="button" title="Edit" icon="ui-icon-pencil"/>
+				            </h:commandLink>
+				        </f:facet>
+				    </p:toolbar>
+		            <p:panel header="Invoice Details" id="invoicesPnl">
+		                <p:messages id="messages"/>
+		                <h:panelGrid columns="2" columnClasses="label, value" id="invoicesGrid">
+		                    <h:outputText value="Customer Name: *" style="color:black; font-size:13px;"/>
+							<p:inputText value="#{invoiceController.invoice.customerName}" required="true" label="Customer Name" readonly="true"/>
+		                    <h:outputText value="Issue Date: *" style="color:black; font-size:13px;" />
+		                    <p:calendar value="#{invoiceController.invoice.issueDate}" required="true" label="Issue Date" readonly="true" showOn="false"/>
+		 
+		                    <h:outputText value="Due Date: *" style="color:black; font-size:13px;"/>
+		                    <p:calendar value="#{invoiceController.invoice.dueDate}" required="true" label="Due Date" readonly="true" showOn="false"/>
+		                    
+		                    <h:outputText value="Pay Date: " style="color:black; font-size:13px;"/>
+		                    <p:calendar value="#{invoiceController.invoice.payDate}" label="Pay Date" readonly="true" showOn="false"/>
+		                    
+		                    <h:outputText value="Comments: " style="color:black; font-size:13px;"/>
+		                    <p:inputTextarea value="#{invoiceController.invoice.comments}" mode="native" style="width:250px;height:50px" label="Comments" readonly="true"/>
+		                    
+		                    <h:outputText value="Total: " style="color:black; font-size:15px;"/>
+		                    <p:inputText value="#{invoiceController.invoice.totalValue}" id="totalItem" readonly="true">
+		                    	<f:convertNumber pattern="#00.00" locale="pt_BR"/>
+		                    </p:inputText>
+		                </h:panelGrid>
+		            </p:panel>
+		            <p:panel header="Items">	
+							<p:dataTable var="item" value="#{invoiceController.listItems()}" id="itemTable">
+							    <p:column headerText="Description">
+							        <h:outputText value="#{item.product}" />
+							    </p:column>
+							 
+							    <p:column headerText="Quantity">
+							        <h:outputText value="#{item.quantity}" />
+							    </p:column>
+							 
+							    <p:column headerText="Unit Price">
+							        <h:outputText value="#{item.unitPrice.doubleValue()}"/>
+							    </p:column>
+							 
+							    <p:column headerText="Total">
+							        <h:outputText value="#{item.totalItem.doubleValue()}"/>
+							    </p:column>
+							</p:dataTable>	
+				
+							<h:outputText value="Total: " style="color:black; font-size:15px;"/>
+		                    <p:outputLabel value="#{invoiceController.invoice.totalValue}" id="totalItemtable" readonly="true">
+		                    	<f:convertNumber pattern="#00.00" locale="pt_BR"/>
+		                    </p:outputLabel>
+
+			    		</p:panel>
+				</p:tab>
+			</h:form>
+		</ui:define>
+	</ui:composition>
+</html>

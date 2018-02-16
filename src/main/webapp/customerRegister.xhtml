@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:opt="http://primefaces.prime.com.br/optimus"
+      xmlns:p="http://primefaces.org/ui">
+	<h:head>
+		<link rel="stylesheet" href="css/bootstrap.css" type="text/css" media="all" />
+		<link rel="stylesheet" href="css/bootstrap-theme.css" type="text/css" media="all" />
+		<link rel="stylesheet" href="css/style.css" type="text/css" media="all" />
+		<script src="js/transition.js" />
+		<script src="js/button.js" />
+	</h:head>
+	<ui:composition template="template.xhtml">
+		
+		<ui:define name="body">
+		<h:form class="form-horizontal col-sm-10">
+		
+			<p:tab id="personal" title="">
+	            <p:panel header="Customer Register">
+	                <p:messages />
+	                <h:panelGrid columns="2" columnClasses="label, value">
+	                    <h:outputText value="Name: *" style="color:black; font-size:13px;" />
+	                    <p:inputText value="#{customerController.customer.name}" required="true" label="Name" />
+	 
+	                    <h:outputText value="Birth Date: " style="color:black; font-size:13px;"/>
+	                    <p:calendar value="#{customerController.customer.birthDate}" label="Birth Date" />
+	 
+	                    <h:outputText value="Phone Number: *" style="color:black; font-size:13px;"/>
+	                    <p:inputMask mask="99999-9999" value="#{customerController.customer.phoneNumber}" required="true" label="Phone Number"/>
+	 
+	 					<h:outputText value="Addres: *" style="color:black; font-size:13px;"/>
+	                    <p:inputText value="#{customerController.customer.address}" required="true" label="Address"/>
+	                </h:panelGrid>
+	                <p:commandButton value="Save" actionListener="#{customerController.addCustomer()}" icon="ui-icon-check" validateClient="true" onstart="statusDialog.show();" onsuccess="statusDialog.hide();" />
+	            </p:panel>
+			</p:tab>
+			
+		</h:form>
+		
+		<p:tab id="personal" title="Customers">
+			<p:dataTable id="customer" 
+				value="#{customerController.listAll()}"
+				var="customer" class="container col-sm-10">
+				<p:column >
+					<f:facet name="header">
+						<h:outputText value="Name" />
+					</f:facet>
+					<h:outputText value="#{customer.name}"/>
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Phone Number"/>
+					</f:facet>
+					<h:outputText value="#{customer.phoneNumber}"/>
+				</p:column>
+				<p:column>
+					<f:facet name="header">
+						<h:outputText value="Address"/>
+					</f:facet>
+					<h:outputText value="#{customer.address}"/>
+				</p:column>
+			</p:dataTable>
+		</p:tab>
+		</ui:define>
+	</ui:composition>
+</html>

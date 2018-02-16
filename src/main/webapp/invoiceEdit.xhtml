@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:h="http://java.sun.com/jsf/html"
+	  xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:opt="http://primefaces.prime.com.br/optimus"
+      xmlns:p="http://primefaces.org/ui">
+	<h:head>
+		<link rel="stylesheet" href="css/bootstrap.css" type="text/css" media="all" />
+		<link rel="stylesheet" href="css/bootstrap-theme.css" type="text/css" media="all" />
+		<link rel="stylesheet" href="css/style.css" type="text/css" media="all" />
+	</h:head>
+	<ui:composition template="template.xhtml">
+		<ui:define name="body">
+			<h:form>
+				<p:tab id="invoicesTab">
+					<p:toolbar>
+				        <f:facet name="left">      
+							<h:outputLink value="\invoiceView.xhtml">
+				            	<p:commandButton type="button" title="Back to invoice view" value="back" icon="ui-icon-arrowreturn-1-w" />
+				        	</h:outputLink>
+				        </f:facet>
+				    </p:toolbar>
+		            <p:panel header="Invoice Edit" id="mainPnl">
+		                <p:messages />
+		                <h:panelGrid columns="2" columnClasses="label, value" id="invoicesPnl">
+		                    <h:outputText value="Customer Name: *" style="color:black; font-size:13px;"/>
+							<p:inputText value="#{invoiceController.invoice.customerName}" required="true" label="Customer Name"/>
+		                    <h:outputText value="Issue Date: *" style="color:black; font-size:13px;" />
+		                    <p:calendar value="#{invoiceController.invoice.issueDate}" required="true" label="Issue Date"/>
+		 
+		                    <h:outputText value="Due Date: *" style="color:black; font-size:13px;"/>
+		                    <p:calendar value="#{invoiceController.invoice.dueDate}" required="true" label="Due Date"/>
+		                    
+		                    <h:outputText value="Pay Date: " style="color:black; font-size:13px;"/>
+		                    <p:calendar value="#{invoiceController.invoice.payDate}" label="Pay Date"/>
+		                    
+		                    <h:outputText value="Comments: " style="color:black; font-size:13px;"/>
+		                    <p:inputTextarea value="#{invoiceController.invoice.comments}" mode="native" style="width:250px;height:50px" label="Comments"/>
+		                    
+		                    <h:outputText value="Total: " style="color:black; font-size:15px;"/>
+		                    <p:inputText value="#{invoiceController.invoice.totalValue}" id="totalInvoice" readonly="true">
+		                    	<f:convertNumber pattern="#00.00" locale="pt_BR"/>
+		                    </p:inputText>
+		                    
+		                </h:panelGrid>
+		                <p:commandButton value="Save" actionListener="#{invoiceController.addInvoice}" icon="ui-icon-check" validateClient="true" onstart="statusDialog.show();" onsuccess="statusDialog.hide();" update="@this" />
+		                
+		                <p:panel header="Items">	
+							<p:commandButton value="Add Item" onclick="if(#{invoiceController.invoice.id != null}){PF('dlgAddItem').show();}else{PF('dlgAlertSaveInvoice').show();}" action="#{invoiceController.service.prepareAddInvoiceItem()}" update="@this"/>			
+							<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" widgetVar="dlgAlertSaveInvoice" message="You must save an invoice before adding new items.">
+						        <p:commandButton value="Ok" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-check" onclick=""/>
+						    </p:confirmDialog>
+							<p:dataTable var="item" value="#{invoiceController.listItems()}" id="itemTable">
+							    <p:column headerText="Description">
+							        <h:outputText value="#{item.product}" />
+							    </p:column>
+							 
+							    <p:column headerText="Quantity">
+							        <h:outputText value="#{item.quantity}" />
+							    </p:column>
+							 
+							    <p:column headerText="Unit Price">
+							        <h:outputText value="#{item.unitPrice.doubleValue()}"/>
+							    </p:column>
+							 
+							    <p:column headerText="Total">
+							        <h:outputText value="#{item.totalItem.doubleValue()}"/>
+							    </p:column>
+							    
+							    <p:column headerText="">
+							        <p:commandButton action="#{invoiceController.removeInvoiceItem(item)}" id="btnDel" icon="ui-icon-trash" title="Delete invoice" onclick="PF('dlgConfDeleteItem').show();" update="@all">
+							   			<p:confirm header="Confirmation" message="Are you sure?" icon="ui-icon-alert" />
+							   		</p:commandButton>
+							   			<p:confirmDialog global="true" showEffect="fade" hideEffect="fade" widgetVar="dlgConfDeleteItem">
+											<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+											<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+										</p:confirmDialog>
+									
+									
+							    </p:column>
+							</p:dataTable>	
+			    		</p:panel>
+		            </p:panel>
+				</p:tab>	
+				<p:dialog header="Add Item" widgetVar="dlgAddItem" modal="true" height="155">
+				    <h:panelGrid columns="2" columnClasses="label, value" id="itemsPnl">
+		                    <h:outputText value="Product Detail: *" style="color:black; font-size:13px;" required="true" label="Issue Date"/>
+							<p:inputText value="#{invoiceController.service.invoiceItem.product}" />
+							
+		                    <h:outputText value="Quantity: *" style="color:black; font-size:13px;" />
+		                    <p:inputMask mask="9?" value="#{invoiceController.service.invoiceItem.quantity}" id="inpQntt">
+		 						<f:ajax event="keyup" listener="#{invoiceController.service.calcTotalItem()}" render="totalItem" />
+		 					</p:inputMask>
+		 					
+		                    <h:outputText value="Unit Price: *" style="color:black; font-size:13px;"/>
+		                    <p:inputText value="#{invoiceController.service.invoiceItem.unitPrice}" id="inpUnitPrice" onchange="#{invoiceController.service.calcTotalItem()}">
+		                    	<f:convertNumber  pattern="#,###,##00.00" />
+		                    	<f:ajax event="keyup" listener="#{invoiceController.service.calcTotalItem()}" render="totalItem" />
+		                    </p:inputText>
+		                    
+		                    <h:outputText value="Total: " style="color:black; font-size:13px;"/>
+		                    <p:inputText value="#{invoiceController.service.invoiceItem.totalItem}" id="totalItem" readonly="true">
+		                    	<f:convertNumber pattern="#00.00" locale="pt_BR"/>
+		                    </p:inputText>
+		                    <p:commandButton value="Save" actionListener="#{invoiceController.addInvoiceItem()}" icon="ui-icon-check" validateClient="true" onstart="statusDialog.show();" onsuccess="statusDialog.hide();"  update="itemTable" />
+		        	</h:panelGrid>
+				</p:dialog>
+			</h:form>
+		</ui:define>
+	</ui:composition>
+</html>
